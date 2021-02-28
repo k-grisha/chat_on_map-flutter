@@ -6,8 +6,9 @@ part 'user-dto.g.dart';
 class UserDto {
   final String uuid;
   final String name;
+  final String fbsToken;
 
-  UserDto(this.name, {this.uuid});
+  UserDto(this.name, this.fbsToken, {this.uuid});
 
   factory UserDto.fromJson(Map<String, dynamic> json) => _$UserDtoFromJson(json);
 

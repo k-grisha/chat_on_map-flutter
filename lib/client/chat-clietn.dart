@@ -6,7 +6,7 @@ import '../dto/user-dto.dart';
 
 part 'chat-clietn.g.dart';
 
-@RestApi(baseUrl: "http://192.168.31.154:8020/api/v1")
+@RestApi(baseUrl: "http://192.168.31.152:8020/api/v1")
 abstract class ChatClient {
   factory ChatClient(Dio dio, {String baseUrl}) = _ChatClient;
 

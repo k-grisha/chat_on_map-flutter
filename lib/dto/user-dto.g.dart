@@ -9,6 +9,7 @@ part of 'user-dto.dart';
 UserDto _$UserDtoFromJson(Map<String, dynamic> json) {
   return UserDto(
     json['name'] as String,
+    json['fbsToken'] as String,
     uuid: json['uuid'] as String,
   );
 }
@@ -16,4 +17,5 @@ UserDto _$UserDtoFromJson(Map<String, dynamic> json) {
 Map<String, dynamic> _$UserDtoToJson(UserDto instance) => <String, dynamic>{
       'uuid': instance.uuid,
       'name': instance.name,
+      'fbsToken': instance.fbsToken,
     };

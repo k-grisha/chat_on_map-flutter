@@ -1,4 +1,5 @@
 import 'package:chat_on_map/service/preferences-service.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 
@@ -22,6 +23,7 @@ class SettingsViewState extends State<SettingsView> with WidgetsBindingObserver 
   static final RegExp nameRegExp = RegExp(r'^[a-zA-Z](([\._\-][a-zA-Z0-9])|[a-zA-Z0-9])*[a-z0-9]$');
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _eCtrl = new TextEditingController();
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,7 +74,8 @@ class SettingsViewState extends State<SettingsView> with WidgetsBindingObserver 
       },
     );
 
-    var createdUser = await widget.mapClient.createUser(new UserDto(_eCtrl.text));
+    var fbsToken = await _firebaseMessaging.getToken();
+    var createdUser = await widget.mapClient.createUser(new UserDto(_eCtrl.text, fbsToken));
 
     if (createdUser.uuid.isEmpty) {
       logger.w("Unable to registered new user " + _eCtrl.text);

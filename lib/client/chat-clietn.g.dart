@@ -9,7 +9,7 @@ part of 'chat-clietn.dart';
 class _ChatClient implements ChatClient {
   _ChatClient(this._dio, {this.baseUrl}) {
     ArgumentError.checkNotNull(_dio, '_dio');
-    baseUrl ??= 'http://192.168.31.154:8020/api/v1';
+    baseUrl ??= 'http://192.168.31.152:8020/api/v1';
   }
 
   final Dio _dio;

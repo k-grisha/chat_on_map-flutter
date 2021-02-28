@@ -9,7 +9,7 @@ part of 'map-client.dart';
 class _MapClient implements MapClient {
   _MapClient(this._dio, {this.baseUrl}) {
     ArgumentError.checkNotNull(_dio, '_dio');
-    baseUrl ??= 'http://192.168.31.154:8010/api/v1';
+    baseUrl ??= 'http://192.168.31.152:8010/api/v1';
   }
 
   final Dio _dio;

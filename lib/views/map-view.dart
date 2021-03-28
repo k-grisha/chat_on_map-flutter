@@ -13,6 +13,7 @@ import 'package:sqlite_viewer/sqlite_viewer.dart';
 
 import '../model/map-point.dart';
 import '../service/marker-service.dart';
+import 'dialog/custom_info_window.dart';
 
 class MapWidget extends StatefulWidget {
   final MarkerService _markerService;
@@ -155,7 +156,12 @@ class MapWidgetState extends State<MapWidget> with WidgetsBindingObserver {
           markerId: MarkerId(markerUuid),
           position: cluster.location,
           infoWindow: cluster.isMultiple ? null : await getInfoWindow(cluster, isMe),
+          consumeTapEvents: true,
           onTap: () {
+            print("Im tapped");
+            _animateCamera(cluster.location);
+            _showInfo();
+
             if (!cluster.isMultiple && !isMe) {
               _onMarkerTapped(cluster);
             }
@@ -164,6 +170,24 @@ class MapWidgetState extends State<MapWidget> with WidgetsBindingObserver {
               text: cluster.isMultiple ? cluster.count.toString() : null),
         );
       };
+
+  _animateCamera(LatLng location) async {
+    final GoogleMapController controller = await _controller.future;
+    controller.animateCamera(CameraUpdate.newLatLng(location));
+  }
+
+  _showInfo() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Align(
+              alignment: Alignment.topCenter,
+              child: CustomInfoWindow(
+                name: "Kate",
+                description: "I'd like to chat with somebody",
+              ));
+        });
+  }
 
   Future<InfoWindow> getInfoWindow(Cluster<MapPoint> cluster, bool isMe) async {
     MapPoint point = cluster.items.first;

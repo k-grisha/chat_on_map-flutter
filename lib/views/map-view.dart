@@ -160,10 +160,8 @@ class MapWidgetState extends State<MapWidget> with WidgetsBindingObserver {
           onTap: () {
             print("Im tapped");
             _animateCamera(cluster.location);
-            _showInfo();
-
             if (!cluster.isMultiple && !isMe) {
-              _onMarkerTapped(cluster);
+              _showInfoWindow(markerUuid);
             }
           },
           icon: await _getMarkerBitmap(cluster.isMultiple ? 125 : 75,
@@ -176,15 +174,15 @@ class MapWidgetState extends State<MapWidget> with WidgetsBindingObserver {
     controller.animateCamera(CameraUpdate.newLatLng(location));
   }
 
-  _showInfo() {
+  _showInfoWindow(String markerUuid) async {
+    ChatUser chatUser = await widget._userService.getUser(markerUuid);
     showDialog(
         context: context,
         builder: (BuildContext context) {
           return Align(
               alignment: Alignment.topCenter,
               child: CustomInfoWindow(
-                name: "Kate",
-                description: "I'd like to chat with somebody",
+                chatUser: chatUser,
               ));
         });
   }
@@ -201,12 +199,6 @@ class MapWidgetState extends State<MapWidget> with WidgetsBindingObserver {
         onTap: () {
           Navigator.pushNamed(context, '/chat', arguments: user);
         });
-  }
-
-  void _onMarkerTapped(Cluster<MapPoint> cluster) {
-    var name = cluster.items.first.name;
-    // point.name
-    print('-- marker-- $name');
   }
 
   Future<BitmapDescriptor> _getMarkerBitmap(int size, {String text}) async {

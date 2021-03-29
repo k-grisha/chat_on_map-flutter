@@ -11,9 +11,9 @@ class UnknownMsgHandler implements MsgHandler {
     _logger.e("Unknown message received type: " +
         msgDto.type.toString() +
         ", from " +
-        msgDto.sender +
+        msgDto.senderId +
         ", to " +
-        msgDto.recipient +
+        msgDto.recipientId +
         ", body:\n " +
         msgDto.body);
   }

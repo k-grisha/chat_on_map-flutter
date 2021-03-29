@@ -11,7 +11,7 @@ class TextMsgHandler implements MsgHandler {
 
   @override
   handleMsg(MessageDto messageDto) {
-    var textMessage = new TextMessage(messageDto.id, messageDto.sender, messageDto.recipient, messageDto.body);
+    var textMessage = new TextMessage(messageDto.id, messageDto.senderId, messageDto.recipientId, messageDto.body);
     _messageRepository.save(textMessage);
   }
 }

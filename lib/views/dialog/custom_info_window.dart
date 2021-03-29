@@ -1,12 +1,12 @@
 import 'dart:ui';
 
+import 'package:chat_on_map/model/chat-user.dart';
 import 'package:flutter/material.dart';
 
 class CustomInfoWindow extends StatefulWidget {
-  final String name, description, text;
-  final Image img;
+  final ChatUser chatUser;
 
-  const CustomInfoWindow({Key key, this.name, this.description, this.text, this.img}) : super(key: key);
+  const CustomInfoWindow({Key key, this.chatUser}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _CustomInfoWindowState();
@@ -44,14 +44,14 @@ class _CustomInfoWindowState extends State<CustomInfoWindow> {
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   Text(
-                    widget.name,
+                    widget.chatUser.name,
                     style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
                   ),
                   SizedBox(
                     height: 15,
                   ),
                   Text(
-                    widget.description,
+                    "I'd like to chat",
                     style: TextStyle(fontSize: 14),
                     textAlign: TextAlign.center,
                   ),
@@ -62,7 +62,7 @@ class _CustomInfoWindowState extends State<CustomInfoWindow> {
                     alignment: Alignment.bottomRight,
                     child: FlatButton(
                         onPressed: () {
-                          print("KUKUKU");
+                          Navigator.pushNamed(context, '/chat', arguments: widget.chatUser);
                         },
                         child: Text(
                           "Chat",

@@ -39,7 +39,7 @@ class ChatMessageService {
       logger.w(response.body);
     } else {
       _messageRepository
-          .save(TextMessage(response.id, response.sender, response.recipient, response.body, DateTime.now()));
+          .save(TextMessage(response.id, response.senderId, response.recipientId, response.body, DateTime.now()));
       updateListeners();
     }
   }

@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:chat_on_map/service/handlers/handlers-registry.dart';
 import 'package:chat_on_map/service/handlers/impl/text-msg-handler.dart';
@@ -21,7 +22,9 @@ import 'service/preferences-service.dart';
 import 'service/user-service.dart';
 import 'views/settings-view.dart';
 
-void main() {
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(MyApp());
 }
 

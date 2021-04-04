@@ -23,7 +23,7 @@ class SettingsViewState extends State<SettingsView> with WidgetsBindingObserver 
   static final RegExp nameRegExp = RegExp(r'^[a-zA-Z](([\._\-][a-zA-Z0-9])|[a-zA-Z0-9])*[a-z0-9]$');
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _eCtrl = new TextEditingController();
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 
   Widget build(BuildContext context) {
     return Scaffold(

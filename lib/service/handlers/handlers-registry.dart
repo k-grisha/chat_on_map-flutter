@@ -1,4 +1,4 @@
-import 'package:chat_on_map/dto/message-dto.dart';
+import 'package:chat_on_map/dto/income-message-dto.dart';
 
 import 'impl/text-msg-handler.dart';
 import 'impl/unknown-msg-handler.dart';
@@ -19,5 +19,5 @@ class MsgHandlersRegistry {
 }
 
 abstract class MsgHandler {
-  handleMsg(MessageDto msg);
+  handleMsg(IncomeMessageDto msg);
 }

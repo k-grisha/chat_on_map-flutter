@@ -30,13 +30,13 @@ class MapWidget extends StatefulWidget {
 
 class MapWidgetState extends State<MapWidget> with WidgetsBindingObserver {
   var logger = Logger();
-  ClusterManager _clusterManager;
+  late ClusterManager _clusterManager;
 
   Completer<GoogleMapController> _controller = Completer();
 
   Set<Marker> markers = Set();
 
-  AppLifecycleState _notification;
+  AppLifecycleState? _notification;
 
   void _startUpdateMarkers() async {
     while (true) {
@@ -56,7 +56,7 @@ class MapWidgetState extends State<MapWidget> with WidgetsBindingObserver {
   }
 
   bool isActive() {
-    return (_notification == null || _notification.index == 0) && ModalRoute.of(context).isCurrent;
+    return (_notification == null || _notification?.index == 0) && ModalRoute.of(context)!.isCurrent;
   }
 
   @override
@@ -68,11 +68,11 @@ class MapWidgetState extends State<MapWidget> with WidgetsBindingObserver {
       _startUpdateMarkers();
       _startUpdateMyPoint();
     });
-    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance!.addObserver(this);
   }
 
   void _checkIfRegistered() async {
-    String myUuid = await widget._preferences.getUuid();
+    String? myUuid = await widget._preferences.getUuid();
     if (myUuid == null) {
       Navigator.pushNamed(context, '/registration');
     }
@@ -89,7 +89,7 @@ class MapWidgetState extends State<MapWidget> with WidgetsBindingObserver {
 
   @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
+    WidgetsBinding.instance!.removeObserver(this);
     super.dispose();
   }
 
@@ -150,12 +150,12 @@ class MapWidgetState extends State<MapWidget> with WidgetsBindingObserver {
   }
 
   Future<Marker> Function(Cluster<MapPoint>) get _markerBuilder => (cluster) async {
-        var markerUuid = cluster.isMultiple ? cluster.getId() : cluster.items.first.uuid;
+        var markerUuid = cluster.isMultiple ? cluster.getId() : cluster.items.first!.uuid;
         var isMe = markerUuid == await widget._preferences.getUuid();
         return Marker(
           markerId: MarkerId(markerUuid),
           position: cluster.location,
-          infoWindow: cluster.isMultiple ? null : await getInfoWindow(cluster, isMe),
+          infoWindow: cluster.isMultiple ? InfoWindow.noText : await getInfoWindow(cluster, isMe),
           consumeTapEvents: true,
           onTap: () {
             print("Im tapped");
@@ -164,8 +164,8 @@ class MapWidgetState extends State<MapWidget> with WidgetsBindingObserver {
               _showInfoWindow(markerUuid);
             }
           },
-          icon: await _getMarkerBitmap(cluster.isMultiple ? 125 : 75,
-              text: cluster.isMultiple ? cluster.count.toString() : null),
+          icon: await _getMarkerBitmap(
+              cluster.isMultiple ? 125 : 75, cluster.isMultiple ? cluster.count.toString() : null),
         );
       };
 
@@ -182,13 +182,17 @@ class MapWidgetState extends State<MapWidget> with WidgetsBindingObserver {
           return Align(
               alignment: Alignment.topCenter,
               child: CustomInfoWindow(
-                chatUser: chatUser,
+                null,
+                chatUser,
               ));
         });
   }
 
   Future<InfoWindow> getInfoWindow(Cluster<MapPoint> cluster, bool isMe) async {
-    MapPoint point = cluster.items.first;
+    MapPoint? point = cluster.items.first;
+    if (point == null) {
+      return InfoWindow.noText;
+    }
     if (isMe) {
       return InfoWindow(title: "It is me " + point.uuid, snippet: '*');
     }
@@ -201,9 +205,7 @@ class MapWidgetState extends State<MapWidget> with WidgetsBindingObserver {
         });
   }
 
-  Future<BitmapDescriptor> _getMarkerBitmap(int size, {String text}) async {
-    assert(size != null);
-
+  Future<BitmapDescriptor> _getMarkerBitmap(int size, String? text) async {
     final PictureRecorder pictureRecorder = PictureRecorder();
     final Canvas canvas = Canvas(pictureRecorder);
     final Paint paint1 = Paint()..color = Colors.orange;
@@ -229,6 +231,6 @@ class MapWidgetState extends State<MapWidget> with WidgetsBindingObserver {
     final img = await pictureRecorder.endRecording().toImage(size, size);
     final data = await img.toByteData(format: ImageByteFormat.png);
 
-    return BitmapDescriptor.fromBytes(data.buffer.asUint8List());
+    return BitmapDescriptor.fromBytes(data!.buffer.asUint8List());
   }
 }

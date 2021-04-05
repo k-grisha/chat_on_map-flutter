@@ -6,21 +6,21 @@ import 'package:flutter/material.dart';
 class CustomInfoWindow extends StatefulWidget {
   final ChatUser chatUser;
 
-  const CustomInfoWindow({Key key, this.chatUser}) : super(key: key);
+  const CustomInfoWindow(Key? key, this.chatUser) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _CustomInfoWindowState();
 }
 
 class _CustomInfoWindowState extends State<CustomInfoWindow> with SingleTickerProviderStateMixin {
-  AnimationController controller;
-  Animation<double> scaleAnimation;
+  late AnimationController controller;
+  late Animation<double> scaleAnimation;
 
   @override
   void initState() {
     super.initState();
     // TODO improve animation
-    controller = AnimationController(vsync: this, duration: Duration(milliseconds: 950));
+    controller = AnimationController(vsync: this, duration: Duration(milliseconds: 100));
     scaleAnimation = CurvedAnimation(parent: controller, curve: Curves.elasticInOut);
 
     controller.addListener(() {

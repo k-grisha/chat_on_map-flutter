@@ -5,7 +5,6 @@ class TextMessage {
   String message;
   DateTime received;
 
-  TextMessage(this.id, this.sender, this.recipient, this.message, [DateTime received]) {
-    this.received = received ?? DateTime.now();
-  }
+  TextMessage(this.id, this.sender, this.recipient, this.message, [DateTime? received])
+      : this.received = received ?? DateTime.now();
 }

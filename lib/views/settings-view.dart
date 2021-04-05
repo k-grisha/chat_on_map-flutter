@@ -1,3 +1,4 @@
+import 'package:chat_on_map/dto/create-user-dto.dart';
 import 'package:chat_on_map/service/preferences-service.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -50,15 +51,17 @@ class SettingsViewState extends State<SettingsView> with WidgetsBindingObserver 
                         return _isNameValid(value);
                       }),
                   new SizedBox(height: 10.0),
-                  new RaisedButton(
+                  new ElevatedButton(
                     onPressed: () {
-                      if (_formKey.currentState.validate()) {
+                      if (_formKey.currentState != null && _formKey.currentState!.validate()) {
                         _registerNewUser(context);
                       }
                     },
                     child: Text('Регистрация'),
-                    color: Colors.blue,
-                    textColor: Colors.white,
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.blue, // background
+                      onPrimary: Colors.white, // foreground
+                    ),
                   )
                 ]))));
   }
@@ -75,7 +78,7 @@ class SettingsViewState extends State<SettingsView> with WidgetsBindingObserver 
     );
 
     var fbsToken = await _firebaseMessaging.getToken();
-    var createdUser = await widget.mapClient.createUser(new UserDto(_eCtrl.text, fbsToken));
+    var createdUser = await widget.mapClient.createUser(new CreateUserDto(_eCtrl.text, fbsToken!));
 
     if (createdUser.uuid.isEmpty) {
       logger.w("Unable to registered new user " + _eCtrl.text);
@@ -91,7 +94,7 @@ class SettingsViewState extends State<SettingsView> with WidgetsBindingObserver 
   // fixme: it doesn't work
   Future<bool> didPopRoute() async {
     super.didPopRoute();
-    String myUuid = await widget._preferences.getUuid();
+    String? myUuid = await widget._preferences.getUuid();
     if (myUuid != null) {
       return true;
     }
@@ -100,19 +103,19 @@ class SettingsViewState extends State<SettingsView> with WidgetsBindingObserver 
 
   @override
   void initState() {
-    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance!.addObserver(this);
     super.initState();
   }
 
   @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
+    WidgetsBinding.instance!.removeObserver(this);
     _eCtrl.dispose();
     super.dispose();
   }
 
-  String _isNameValid(String name) {
-    if (name.isEmpty || name.length > 50 || name.length < 3) {
+  String? _isNameValid(String? name) {
+    if (name == null || name.isEmpty || name.length > 50 || name.length < 3) {
       return "Пожалуйста введите имя, от 3 до 50 символа";
     }
     name = name.trim();
@@ -123,7 +126,7 @@ class SettingsViewState extends State<SettingsView> with WidgetsBindingObserver 
   }
 
   void _popIfRegistered(BuildContext context) async {
-    String myUuid = await widget._preferences.getUuid();
+    String? myUuid = await widget._preferences.getUuid();
     if (myUuid != null) {
       Navigator.of(context).pop();
     }

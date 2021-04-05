@@ -1,6 +1,6 @@
 class MapPoint {
   String uuid;
-  String name;
+  String? name;
   Sex sex;
 
   MapPoint(this.uuid, {this.name, this.sex = Sex.NONE});

@@ -15,11 +15,11 @@ class ChatView extends StatefulWidget {
 
 class ChatWidgetState extends State<ChatView> {
   final TextEditingController _eCtrl = new TextEditingController();
-  ChatUser _opponent;
+  late ChatUser _opponent;
 
   @override
   Widget build(BuildContext context) {
-    _opponent = ModalRoute.of(context).settings.arguments;
+    _opponent = ModalRoute.of(context)!.settings.arguments! as ChatUser;
     return new Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
@@ -37,6 +37,7 @@ class ChatWidgetState extends State<ChatView> {
 
   @override
   void initState() {
+    super.initState();
     widget._chatMessageService.addListener(refresh);
   }
 
@@ -61,7 +62,7 @@ class ChatWidgetState extends State<ChatView> {
   Widget getChatMessages() {
     return FutureBuilder<List>(
         future: widget._chatMessageService.getAllMessagesFrom(_opponent.uuid),
-        initialData: List(),
+        initialData: <TextMessage>[],
         builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
           if (!snapshot.hasData) {
             return Expanded(
@@ -70,9 +71,9 @@ class ChatWidgetState extends State<ChatView> {
             return Flexible(
                 child: new ListView.builder(
                     reverse: true,
-                    itemCount: snapshot.data.length,
+                    itemCount: snapshot.data!.length,
                     itemBuilder: (context, i) {
-                      return _buildRow(context, snapshot.data[i]);
+                      return _buildRow(context, snapshot.data![i]);
                     }));
           }
         });

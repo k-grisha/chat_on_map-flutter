@@ -12,9 +12,9 @@ class MessageRepository {
   static const String COLUMN_RECEIVED = "received";
   Future<Database> database;
 
-  MessageRepository() {
+  MessageRepository() :
     database = DbHelper.initDbConnection();
-  }
+
 
   Future<void> save(TextMessage message) async {
     final Database db = await database;
@@ -34,7 +34,7 @@ class MessageRepository {
     await batch.commit(noResult: true);
   }
 
-  Future<int> getMaxMessageId(String uuid) async {
+  Future<int?> getMaxMessageId(String uuid) async {
     final Database db = await database;
     return Sqflite.firstIntValue(
         await db.rawQuery("SELECT MAX(id) FROM " + TABLE_MESSAGES + " WHERE recipient='" + uuid + "'"));
@@ -42,12 +42,12 @@ class MessageRepository {
 
   Future<List<TextMessage>> getAll(String uuid1, String uuid2) async {
     final Database db = await database;
-    List<Map> maps = await db.query(TABLE_MESSAGES,
+    var maps = await db.query(TABLE_MESSAGES,
         columns: [COLUMN_ID, COLUMN_SENDER, COLUMN_RECIPIENT, COLUMN_MESSAGE, COLUMN_RECEIVED],
         where: '(recipient = ? AND sender = ?) OR (recipient = ? AND sender = ?)',
         whereArgs: [uuid1, uuid2, uuid2, uuid1],
         orderBy: COLUMN_ID + ' DESC');
-    var res = maps.isEmpty ? [] : maps.map((m) => fromMap(m)).toList();
+    var res = maps.isEmpty ? <TextMessage>[] : maps.map((m) => fromMap(m)).toList();
     return res;
   }
 

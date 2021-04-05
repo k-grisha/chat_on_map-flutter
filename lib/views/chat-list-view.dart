@@ -29,7 +29,7 @@ class ChatListView extends StatelessWidget {
   Widget getChatItemsWidget() {
     return FutureBuilder<List>(
         future: chatItemService.getAllItems(),
-        initialData: List(),
+        initialData: <ChatItem>[],
         builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
           if (!snapshot.hasData) {
             return Expanded(
@@ -38,10 +38,10 @@ class ChatListView extends StatelessWidget {
             return Flexible(
                 child: new ListView.separated(
               padding: const EdgeInsets.all(8),
-              itemCount: snapshot.data.length,
+              itemCount: snapshot.data!.length,
               separatorBuilder: (BuildContext context, int index) => const Divider(),
               itemBuilder: (context, i) {
-                return _buildRow(context, snapshot.data[i]);
+                return _buildRow(context, snapshot.data![i]);
                 // return Text(""+ i.toString(), style: DefaultTextStyle.of(context).style.apply(fontSizeFactor: 1));
               },
             ));

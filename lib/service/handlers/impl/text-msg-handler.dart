@@ -1,4 +1,4 @@
-import 'package:chat_on_map/dto/message-dto.dart';
+import 'package:chat_on_map/dto/income-message-dto.dart';
 import 'package:chat_on_map/model/chat-message.dart';
 import 'package:chat_on_map/repository/message-repository.dart';
 
@@ -10,7 +10,7 @@ class TextMsgHandler implements MsgHandler {
   TextMsgHandler(this._messageRepository);
 
   @override
-  handleMsg(MessageDto messageDto) {
+  handleMsg(IncomeMessageDto messageDto) {
     var textMessage = new TextMessage(messageDto.id, messageDto.senderId, messageDto.recipientId, messageDto.body);
     _messageRepository.save(textMessage);
   }

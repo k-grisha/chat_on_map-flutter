@@ -3,27 +3,24 @@ import 'package:json_annotation/json_annotation.dart';
 // part 'user-dto.g.dart';
 
 @JsonSerializable()
-class UserDto {
-  final String uuid;
+class CreateUserDto {
   final String name;
   final String fbsToken;
 
-  UserDto(this.name, this.fbsToken, this.uuid);
+  CreateUserDto(this.name, this.fbsToken);
 
   // factory UserDto.fromJson(Map<String, dynamic> json) => _$UserDtoFromJson(json);
 
-  Map<String, dynamic> toJson() => _$UserDtoToJson(this);
+  Map<String, dynamic> toJson() => _$CreateUserDto(this);
 
-  factory UserDto.fromJson(Map<String, dynamic> json) {
-    return UserDto(
+  factory CreateUserDto.fromJson(Map<String, dynamic> json) {
+    return CreateUserDto(
       json['name'] as String,
       json['fbsToken'] as String,
-      json['uuid'] as String,
     );
   }
 
-  Map<String, dynamic> _$UserDtoToJson(UserDto instance) => <String, dynamic>{
-    'uuid': instance.uuid,
+  Map<String, dynamic> _$CreateUserDto(CreateUserDto instance) => <String, dynamic>{
     'name': instance.name,
     'fbsToken': instance.fbsToken,
   };

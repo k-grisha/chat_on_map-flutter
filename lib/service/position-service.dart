@@ -13,19 +13,19 @@ class PositionService {
   PositionService(this._preferences, this._mapClient);
 
   updateMyPoint() async {
-    String myUuid = await _preferences.getUuid();
-    if (myUuid != null) {
-      try {
-        // Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-        Position position = await _determinePosition();
-        await _mapClient.updatePosition(
-            myUuid, PointDto(null, (position.latitude * 1000000).toInt(), (position.longitude * 1000000).toInt()));
-      } catch (e) {
-        logger.w("Unable to update position ", e);
-      }
+    String? myUuid = await _preferences.getUuid();
+    if (myUuid == null) {
+      return;
+    }
+    try {
+      // Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      Position position = await _determinePosition();
+      await _mapClient.updatePosition(
+          myUuid, PointDto(myUuid, (position.latitude * 1000000).toInt(), (position.longitude * 1000000).toInt()));
+    } catch (e) {
+      logger.w("Unable to update position ", e);
     }
   }
-
 
   Future<Position> _determinePosition() async {
     bool serviceEnabled;
@@ -38,20 +38,16 @@ class PositionService {
 
     permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.deniedForever) {
-      return Future.error(
-          'Location permissions are permantly denied, we cannot request permissions.');
+      return Future.error('Location permissions are permantly denied, we cannot request permissions.');
     }
 
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
-      if (permission != LocationPermission.whileInUse &&
-          permission != LocationPermission.always) {
-        return Future.error(
-            'Location permissions are denied (actual value: $permission).');
+      if (permission != LocationPermission.whileInUse && permission != LocationPermission.always) {
+        return Future.error('Location permissions are denied (actual value: $permission).');
       }
     }
 
     return await Geolocator.getCurrentPosition();
   }
-
 }

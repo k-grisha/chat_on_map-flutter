@@ -1,4 +1,3 @@
-
 import 'package:chat_on_map/model/chat-item.dart';
 import 'package:chat_on_map/repository/user-repository.dart';
 
@@ -11,7 +10,10 @@ class ChatItemService {
   ChatItemService(this._userRepository, this._preferences);
 
   Future<List<ChatItem>> getAllItems() async {
-    String uuid = await _preferences.getUuid();
+    String? uuid = await _preferences.getUuid();
+    if (uuid == null) {
+      return <ChatItem>[];
+    }
     var result = await _userRepository.getChatList(uuid);
     result.sort((a, b) => b.lastMessageTime.compareTo(a.lastMessageTime));
     return result;

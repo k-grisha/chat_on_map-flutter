@@ -11,9 +11,9 @@ class UserRepository {
   static const String _COLUMN_NAME = "name";
   Future<Database> database;
 
-  UserRepository() {
+  UserRepository() :
     database = DbHelper.initDbConnection();
-  }
+
 
   Future<void> save(ChatUser user) async {
     final Database db = await database;
@@ -24,21 +24,21 @@ class UserRepository {
     );
   }
 
-  Future<ChatUser> getUser(String uuid) async {
+  Future<ChatUser?> getUser(String uuid) async {
     final Database db = await database;
-    List<Map> maps = await db.query(_TABLE_USER, where: _COLUMN_UUID + '=?', whereArgs: [uuid], limit: 1);
+    var maps = await db.query(_TABLE_USER, where: _COLUMN_UUID + '=?', whereArgs: [uuid], limit: 1);
     return maps.isEmpty ? null : maps.map((m) => fromMap(m)).first;
   }
 
   Future<List<ChatItem>> getChatList(String uuid) async {
     final Database db = await database;
-    List<Map> maps = await db.rawQuery("SELECT * FROM $_TABLE_USER AS u "
+    var maps = await db.rawQuery("SELECT * FROM $_TABLE_USER AS u "
         "JOIN ${MessageRepository.TABLE_MESSAGES} AS m ON m.${MessageRepository.COLUMN_SENDER} = u.$_COLUMN_UUID OR m.${MessageRepository.COLUMN_RECIPIENT} = u.$_COLUMN_UUID  "
         "WHERE u.$_COLUMN_UUID != '$uuid' AND m.${MessageRepository.COLUMN_RECEIVED} =  "
         "(SELECT MAX(${MessageRepository.COLUMN_RECEIVED}) FROM ${MessageRepository.TABLE_MESSAGES} "
         "WHERE ${MessageRepository.COLUMN_RECIPIENT} = u.$_COLUMN_UUID OR ${MessageRepository.COLUMN_SENDER} = u.$_COLUMN_UUID  )  ");
 
-    var res = maps.isEmpty ? [] : maps.map((m) => chatItemFromMap(m)).toList();
+    var res = maps.isEmpty ? <ChatItem>[] : maps.map((m) => chatItemFromMap(m)).toList();
     return res;
   }
 

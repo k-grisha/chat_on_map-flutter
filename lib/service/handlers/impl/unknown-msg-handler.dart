@@ -1,4 +1,4 @@
-import 'package:chat_on_map/dto/message-dto.dart';
+import 'package:chat_on_map/dto/income-message-dto.dart';
 import 'package:logger/logger.dart';
 
 import '../handlers-registry.dart';
@@ -7,7 +7,7 @@ class UnknownMsgHandler implements MsgHandler {
   final _logger = Logger();
 
   @override
-  handleMsg(MessageDto msgDto) {
+  handleMsg(IncomeMessageDto msgDto) {
     _logger.e("Unknown message received type: " +
         msgDto.type.toString() +
         ", from " +

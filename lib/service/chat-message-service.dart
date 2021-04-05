@@ -1,7 +1,8 @@
 import 'dart:async';
 
 import 'package:chat_on_map/client/chat-clietn.dart';
-import 'package:chat_on_map/dto/message-dto.dart';
+import 'package:chat_on_map/dto/income-message-dto.dart';
+import 'package:chat_on_map/dto/outcome-message-dto.dart';
 import 'package:chat_on_map/model/chat-message.dart';
 import 'package:chat_on_map/model/message-type.dart';
 import 'package:chat_on_map/repository/message-repository.dart';
@@ -15,7 +16,7 @@ class ChatMessageService {
   final ChatClient _chatClient;
   final PreferencesService _preferences;
   var logger = Logger();
-  final List<Function> _messageListeners = new List();
+  final List<Function> _messageListeners = <Function>[];
   final MsgHandlersRegistry _handlersRegistry;
 
   ChatMessageService(this._messageRepository, this._chatClient, this._preferences, this._handlersRegistry);
@@ -32,10 +33,14 @@ class ChatMessageService {
     if (message.trim().isEmpty) {
       return;
     }
-    String uuid = await _preferences.getUuid();
-    MessageDto response =
-        await _chatClient.sendMessage(uuid, MessageDto(uuid, recipient, message, MessageType.TEXT_MSG.value));
-    if (response.id == null || response.id <= 0) {
+    String? uuid = await _preferences.getUuid();
+    if (uuid == null) {
+      logger.w("user unregistered");
+      return;
+    }
+    IncomeMessageDto response =
+        await _chatClient.sendMessage(uuid, OutcomeMessageDto(uuid, recipient, message, MessageType.TEXT_MSG.value));
+    if (response.id <= 0) {
       logger.w(response.body);
     } else {
       _messageRepository
@@ -45,9 +50,10 @@ class ChatMessageService {
   }
 
   Future<List<TextMessage>> getAllMessagesFrom(String sender) async {
-    String uuid = await _preferences.getUuid();
+    String? uuid = await _preferences.getUuid();
     if (uuid == null) {
-      return null;
+      logger.w("user unregistered");
+      return <TextMessage>[];
     }
     var res = await _messageRepository.getAll(uuid, sender);
 
@@ -56,15 +62,15 @@ class ChatMessageService {
 
   runMessageUpdater() async {
     while (true) {
-      String uuid = await _preferences.getUuid();
+      String? uuid = await _preferences.getUuid();
       if (uuid == null) {
         await new Future.delayed(const Duration(milliseconds: 3000));
         continue;
       }
-      int lastId = await _messageRepository.getMaxMessageId(uuid);
+      int? lastId = await _messageRepository.getMaxMessageId(uuid);
       var messageDtos = await _chatClient.getMessage(uuid, lastId == null ? 0 : lastId);
 
-      for (MessageDto msg in messageDtos) {
+      for (IncomeMessageDto msg in messageDtos) {
         MessageType.valueOf(msg.type).getHandler(_handlersRegistry).handleMsg(msg);
       }
 

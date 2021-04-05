@@ -1,4 +1,6 @@
-import 'package:chat_on_map/dto/message-dto.dart';
+import 'package:chat_on_map/dto/create-user-dto.dart';
+import 'package:chat_on_map/dto/income-message-dto.dart';
+import 'package:chat_on_map/dto/outcome-message-dto.dart';
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 
@@ -11,14 +13,14 @@ abstract class ChatClient {
   factory ChatClient(Dio dio, {String baseUrl}) = _ChatClient;
 
   @POST("/user")
-  Future<UserDto> createUser(@Body() UserDto userDto);
+  Future<UserDto> createUser(@Body() CreateUserDto userDto);
 
   @GET("/user/{uuid}")
   Future<UserDto> getUser(@Path("uuid") String uuid);
 
   @GET("/message/{uuid}")
-  Future<List<MessageDto>> getMessage(@Path("uuid") String uuid, @Query("lastId") int lastId);
+  Future<List<IncomeMessageDto>> getMessage(@Path("uuid") String uuid, @Query("lastId") int lastId);
 
   @POST("/message/{uuid}")
-  Future<MessageDto> sendMessage(@Path("uuid") String uuid, @Body() MessageDto messageDto);
+  Future<IncomeMessageDto> sendMessage(@Path("uuid") String uuid, @Body() OutcomeMessageDto messageDto);
 }

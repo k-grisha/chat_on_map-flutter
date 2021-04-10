@@ -1,3 +1,4 @@
+import 'package:chat_on_map/views/authentication-view.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -38,8 +39,8 @@ class MyApp extends StatelessWidget {
           injector.get<PositionService>(), injector.get<UserService>()),
       '/chat-list': (BuildContext context) => ChatListView(injector.get<ChatItemService>()),
       '/chat': (BuildContext context) => ChatView(injector.get<ChatMessageService>()),
-      '/registration': (BuildContext context) =>
-          SettingsView(injector.get<ChatClient>(), injector.get<PreferencesService>()),
+      '/registration': (BuildContext context) => SettingsView(injector.get<ChatClient>(), injector.get<PreferencesService>()),
+      '/authentication': (BuildContext context) => AuthenticationView(),
     });
   }
 }

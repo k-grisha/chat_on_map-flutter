@@ -6,9 +6,9 @@ import 'package:json_annotation/json_annotation.dart';
 class UserDto {
   final String uuid;
   final String name;
-  final String fbsToken;
+  final String picture;
 
-  UserDto(this.name, this.fbsToken, this.uuid);
+  UserDto(this.name, this.picture, this.uuid);
 
   // factory UserDto.fromJson(Map<String, dynamic> json) => _$UserDtoFromJson(json);
 
@@ -17,7 +17,7 @@ class UserDto {
   factory UserDto.fromJson(Map<String, dynamic> json) {
     return UserDto(
       json['name'] as String,
-      json['fbsToken'] as String,
+      json['picture'] as String,
       json['uuid'] as String,
     );
   }
@@ -25,6 +25,6 @@ class UserDto {
   Map<String, dynamic> _$UserDtoToJson(UserDto instance) => <String, dynamic>{
     'uuid': instance.uuid,
     'name': instance.name,
-    'fbsToken': instance.fbsToken,
+    'picture': instance.picture,
   };
 }

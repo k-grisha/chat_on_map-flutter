@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 
 import '../client/chat-clietn.dart';
-import 'auth/flutter_firebase_ui.dart';
+import 'auth/sign_in_view.dart';
 import 'auth/utils.dart';
 
 class SettingsView extends StatefulWidget {
@@ -40,20 +40,17 @@ class SettingsViewState extends State<SettingsView> with WidgetsBindingObserver 
 
   Widget build(BuildContext context) {
     if (_currentUser == null) {
-      return new SignInScreen(true, true, 5, 12, "Authorisation",
-          header: new Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16.0),
-            child: new Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: new Text("Chose the authorisation method"),
-            ),
+      return new SignInScreen(
+        header: new Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16.0),
+          child: new Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: new Text("Chose the authorisation method"),
           ),
-          color: Color(0xFF363636),
-          providers: [ProvidersTypes.google, ProvidersTypes.facebook, ProvidersTypes.email, ProvidersTypes.anonymous],
-          twitterConsumerKey: "",
-          twitterConsumerSecret: "",
-          signUpPasswordCheck: true);
+        ),
+      );
     }
+    // var token = await _currentUser?.getIdToken();
     return Scaffold(
         appBar: AppBar(
           leading: IconButton(
@@ -105,7 +102,7 @@ class SettingsViewState extends State<SettingsView> with WidgetsBindingObserver 
     );
 
     var fbsToken = await _firebaseMessaging.getToken();
-    var createdUser = await widget.mapClient.createUser(new CreateUserDto(_eCtrl.text, fbsToken!));
+    var createdUser = await widget.mapClient.createUser(new CreateUserDto(_eCtrl.text, fbsToken!, ""));
 
     if (createdUser.uuid.isEmpty) {
       logger.w("Unable to registered new user " + _eCtrl.text);

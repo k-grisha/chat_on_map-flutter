@@ -51,11 +51,9 @@ class _LoginViewState extends State<LoginView> {
           AuthCredential credential =
               GoogleAuthProvider.credential(idToken: googleAuth.idToken, accessToken: googleAuth.accessToken);
           UserCredential authResult = await _auth.signInWithCredential(credential);
-          User? user = authResult.user;
-          print(user);
+          // User? user = authResult.user;
         } catch (e) {
-          print(e);
-          // showErrorDialog(context, e.details);
+          showErrorDialog(context, "Unable to verify user via Google. Please try again later.");
         }
       }
     }
@@ -63,8 +61,8 @@ class _LoginViewState extends State<LoginView> {
 
   _handleAnonymousSignIn() async {
     UserCredential userCredential = await FirebaseAuth.instance.signInAnonymously();
-    User? user = userCredential.user;
-    print(user);
+    // User? user = userCredential.user;
+    // print(user);
   }
 
   //
@@ -165,7 +163,7 @@ class _LoginViewState extends State<LoginView> {
       //     providersDefinitions(context)[ProvidersTypes.twitter]
       //         .copyWith(onSelected: _handleTwitterSignin),
       ProvidersTypes.email: providersDefinitions()[ProvidersTypes.email]!.copyWith(onSelected: _handleEmailSignIn),
-      ProvidersTypes.anonymous: providersDefinitions()[ProvidersTypes.anonymous]!.copyWith(onSelected: _handleAnonymousSignIn),
+      // ProvidersTypes.anonymous: providersDefinitions()[ProvidersTypes.anonymous]!.copyWith(onSelected: _handleAnonymousSignIn),
     };
 
     return new Container(

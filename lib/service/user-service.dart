@@ -23,7 +23,7 @@ class UserService {
       switch (obj.runtimeType) {
         case DioError:
           final res = (obj as DioError).response;
-          _logger.e("Got error : ${res?.statusCode} -> ${res?.statusMessage}");
+          _logger.e("Unable to fetch a user : ${res?.statusCode} -> ${res?.statusMessage}");
           break;
         default:
           _logger.e("Unable to fetch a user");

@@ -1,24 +1,31 @@
 library firebase_ui;
 
-export 'utils.dart';
-
 import 'package:flutter/material.dart';
+
+import 'sign_in_view.dart';
 import 'login_view.dart';
 import 'utils.dart';
 
+export 'utils.dart';
+
 class SignInScreen extends StatefulWidget {
-  SignInScreen(
-    this.showBar,
-    this.avoidBottomInset,
-    this.bottomPadding,
-    this.horizontalPadding,
-    this.title, {
+  SignInScreen({
+    this.title = "Authorisation",
+    this.showBar = true,
+    this.avoidBottomInset = true,
+    this.bottomPadding = 5,
+    this.horizontalPadding = 12,
     Key? key,
     this.header,
     this.footer,
-    this.signUpPasswordCheck,
-    this.providers,
-    this.color,
+    this.signUpPasswordCheck = true,
+    this.providers = const [
+      ProvidersTypes.google,
+      ProvidersTypes.facebook,
+      ProvidersTypes.email
+      // ProvidersTypes.anonymous
+    ],
+    this.color = const Color(0xFF363636),
     this.twitterConsumerKey,
     this.twitterConsumerSecret,
     this.appleSignInAvailable,

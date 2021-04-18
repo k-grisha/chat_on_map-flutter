@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
     injector.get<ChatMessageService>().runMessageUpdater();
     return MaterialApp(initialRoute: '/', routes: {
       '/': (BuildContext context) => MapWidget(injector.get<MarkerService>(), injector.get<PreferencesService>(),
-          injector.get<PositionService>(), injector.get<UserService>()),
+          injector.get<PositionService>(), injector.get<UserService>(), injector.get<ChatClient>()),
       '/chat-list': (BuildContext context) => ChatListView(injector.get<ChatItemService>()),
       '/chat': (BuildContext context) => ChatView(injector.get<ChatMessageService>()),
       '/registration': (BuildContext context) => SettingsView(injector.get<ChatClient>(), injector.get<PreferencesService>()),

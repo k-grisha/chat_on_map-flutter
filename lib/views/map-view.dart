@@ -241,7 +241,7 @@ class MapWidgetState extends State<MapWidget> with WidgetsBindingObserver {
         return Marker(
           markerId: MarkerId(markerUuid),
           position: cluster.location,
-          infoWindow: cluster.isMultiple ? InfoWindow.noText : await getInfoWindow(cluster, isMe),
+          // infoWindow: cluster.isMultiple ? InfoWindow.noText : await getInfoWindow(cluster, isMe),
           consumeTapEvents: true,
           onTap: () {
             print("Im tapped");
@@ -274,22 +274,22 @@ class MapWidgetState extends State<MapWidget> with WidgetsBindingObserver {
         });
   }
 
-  Future<InfoWindow> getInfoWindow(Cluster<MapPoint> cluster, bool isMe) async {
-    MapPoint? point = cluster.items.first;
-    if (point == null) {
-      return InfoWindow.noText;
-    }
-    if (isMe) {
-      return InfoWindow(title: "It is me " + point.uuid, snippet: '*');
-    }
-    ChatUser user = await widget._userService.getUser(point.uuid);
-    return InfoWindow(
-        title: "My Name is " + user.name,
-        snippet: '*',
-        onTap: () {
-          Navigator.pushNamed(context, '/chat', arguments: user);
-        });
-  }
+  // Future<InfoWindow> getInfoWindow(Cluster<MapPoint> cluster, bool isMe) async {
+  //   MapPoint? point = cluster.items.first;
+  //   if (point == null) {
+  //     return InfoWindow.noText;
+  //   }
+  //   if (isMe) {
+  //     return InfoWindow(title: "It is me " + point.uuid, snippet: '*');
+  //   }
+  //   ChatUser user = await widget._userService.getUser(point.uuid);
+  //   return InfoWindow(
+  //       title: "My Name is " + user.name,
+  //       snippet: '*',
+  //       onTap: () {
+  //         Navigator.pushNamed(context, '/chat', arguments: user);
+  //       });
+  // }
 
   Future<BitmapDescriptor> _getMarkerBitmap(int size, String? text) async {
     final PictureRecorder pictureRecorder = PictureRecorder();

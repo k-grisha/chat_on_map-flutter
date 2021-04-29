@@ -20,17 +20,12 @@ class UserService {
     }
     // todo try id user notFound
     UserDto userDto = await _chatClient.getUser(uuid).catchError((Object obj) {
-      switch (obj.runtimeType) {
-        case DioError:
-          final res = (obj as DioError).response;
-          _logger.e("Unable to fetch a user : ${res?.statusCode} -> ${res?.statusMessage}");
-          break;
-        default:
-          _logger.e("Unable to fetch a user");
-      }
+      final res = (obj as DioError).response;
+      _logger.e("Unable to fetch a user $uuid : ${res?.statusCode} -> ${res?.statusMessage}");
+      throw ("Unable to fetch a user $uuid : ${res?.statusCode} -> ${res?.statusMessage}");
     });
 
-    user = ChatUser(userDto.uuid, userDto.name);
+    user = ChatUser(userDto.uuid, userDto.name, userDto.picture);
     await _userRepository.save(user);
     return user;
   }

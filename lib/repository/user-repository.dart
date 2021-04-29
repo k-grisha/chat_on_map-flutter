@@ -9,6 +9,7 @@ class UserRepository {
   static const String _TABLE_USER = "user";
   static const String _COLUMN_UUID = "uuid";
   static const String _COLUMN_NAME = "name";
+  static const String _COLUMN_AVATAR = "avatar";
   Future<Database> database;
 
   UserRepository() :
@@ -44,17 +45,18 @@ class UserRepository {
 
   ChatItem chatItemFromMap(Map<String, dynamic> map) {
     return ChatItem(map[_COLUMN_UUID], map[_COLUMN_NAME], map[MessageRepository.COLUMN_MESSAGE],
-        DateTime.parse(map[MessageRepository.COLUMN_RECEIVED]));
+        DateTime.parse(map[MessageRepository.COLUMN_RECEIVED]), map[_COLUMN_AVATAR]);
   }
 
   ChatUser fromMap(Map<String, dynamic> map) {
-    return ChatUser(map[_COLUMN_UUID], map[_COLUMN_NAME]);
+    return ChatUser(map[_COLUMN_UUID], map[_COLUMN_NAME], map[_COLUMN_AVATAR]);
   }
 
   Map<String, dynamic> toMap(ChatUser user) {
     return {
       _COLUMN_UUID: user.uuid,
       _COLUMN_NAME: user.name,
+      _COLUMN_AVATAR: user.avatar,
     };
   }
 }

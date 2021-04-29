@@ -83,36 +83,55 @@ class _CustomInfoWindowState extends State<CustomInfoWindow> with SingleTickerPr
                 height: 15,
               ),
               Align(
-                alignment: Alignment.bottomRight,
-                child: FlatButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/chat', arguments: widget.chatUser);
-                    },
-                    child: Text(
-                      "Chat",
-                      style: TextStyle(fontSize: 18),
-                    )),
-              ),
+                  alignment: Alignment.bottomRight,
+                  child: FloatingActionButton(
+                    heroTag: null,
+                    onPressed: () => Navigator.pushNamed(context, '/chat', arguments: widget.chatUser),
+                    materialTapTargetSize: MaterialTapTargetSize.padded,
+                    backgroundColor: Colors.orange,
+                    child: const Icon(Icons.forum, size: 36.0),
+                  )
+                  // FlatButton(
+                  //     onPressed: () {
+                  //       Navigator.pushNamed(context, '/chat', arguments: widget.chatUser);
+                  //     },
+                  //     child: const Icon(Icons.forum, size: 36.0, color: Colors.orange,)),
+                  ),
             ],
           ),
         ),
         Positioned(
           left: Constants.padding,
           right: Constants.padding,
-          child: CircleAvatar(
-            backgroundColor: Colors.transparent,
-            radius: Constants.avatarRadius,
-            child: ClipRRect(
-                borderRadius: BorderRadius.all(Radius.circular(Constants.avatarRadius)),
-                child: Icon(
-                  Icons.emoji_emotions,
-                  size: 64.0,
-                  // color: Colors.orange,
-                )),
-          ),
+          child: CircleAvatar(backgroundColor: Colors.transparent, radius: Constants.avatarRadius, child: _getAvatar()
+              // child: ClipRRect(
+              //     borderRadius: BorderRadius.all(Radius.circular(Constants.avatarRadius)),
+              //     child: Icon(
+              //       Icons.emoji_emotions,
+              //       color: Colors.orange,
+              //       size: 64.0,
+              //       // color: Colors.orange,
+              //     )),
+              ),
         ),
       ],
     );
+  }
+
+  _getAvatar() {
+    if (widget.chatUser.avatar.isEmpty) {}
+    var icon = widget.chatUser.avatar.isEmpty
+        ? Icon(
+            Icons.emoji_emotions,
+            color: Colors.orange,
+            size: 64.0,
+          )
+        : Image.network(
+            widget.chatUser.avatar,
+            width: 64,
+            height: 64,
+          );
+    return ClipRRect(borderRadius: BorderRadius.all(Radius.circular(Constants.avatarRadius)), child: icon);
   }
 }
 

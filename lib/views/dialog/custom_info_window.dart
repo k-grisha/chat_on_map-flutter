@@ -119,19 +119,18 @@ class _CustomInfoWindowState extends State<CustomInfoWindow> with SingleTickerPr
   }
 
   _getAvatar() {
-    if (widget.chatUser.avatar.isEmpty) {}
-    var icon = widget.chatUser.avatar.isEmpty
-        ? Icon(
+    var image = widget.chatUser.avatar?.isEmpty == false
+        ? Image.network(
+            widget.chatUser.avatar!,
+            width: 64,
+            height: 64,
+          )
+        : Icon(
             Icons.emoji_emotions,
             color: Colors.orange,
             size: 64.0,
-          )
-        : Image.network(
-            widget.chatUser.avatar,
-            width: 64,
-            height: 64,
           );
-    return ClipRRect(borderRadius: BorderRadius.all(Radius.circular(Constants.avatarRadius)), child: icon);
+    return ClipRRect(borderRadius: BorderRadius.all(Radius.circular(Constants.avatarRadius)), child: image);
   }
 }
 

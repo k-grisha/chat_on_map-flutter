@@ -4,7 +4,7 @@
 class ChatUser{
   String uuid;
   String name;
-  String avatar;
+  String? avatar;
 
   ChatUser(this.uuid, this.name, this.avatar);
 }

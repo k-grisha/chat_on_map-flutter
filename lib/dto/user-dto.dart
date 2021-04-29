@@ -6,7 +6,7 @@ import 'package:json_annotation/json_annotation.dart';
 class UserDto {
   final String uuid;
   final String name;
-  final String picture;
+  final String? picture;
 
   UserDto(this.name, this.picture, this.uuid);
 

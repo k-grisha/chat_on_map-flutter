@@ -2,14 +2,10 @@ import 'dart:async';
 import 'dart:ui';
 
 import 'package:chat_on_map/client/chat-clietn.dart';
-import 'package:chat_on_map/dto/create-user-dto.dart';
 import 'package:chat_on_map/model/chat-user.dart';
 import 'package:chat_on_map/service/position-service.dart';
 import 'package:chat_on_map/service/preferences-service.dart';
 import 'package:chat_on_map/service/user-service.dart';
-import 'package:dio/dio.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_cluster_manager/google_maps_cluster_manager.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -18,7 +14,6 @@ import 'package:sqlite_viewer/sqlite_viewer.dart';
 
 import '../model/map-point.dart';
 import '../service/marker-service.dart';
-import 'auth/sign_in_view.dart';
 import 'dialog/custom_info_window.dart';
 
 class MapWidget extends StatefulWidget {
@@ -44,9 +39,7 @@ class MapWidget extends StatefulWidget {
 class MapWidgetState extends State<MapWidget> with WidgetsBindingObserver {
   var _logger = Logger();
   late ClusterManager _clusterManager;
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   final Completer<GoogleMapController> _controller = Completer();
-  User? _currentUser;
 
   Set<Marker> markers = Set();
 
@@ -75,28 +68,21 @@ class MapWidgetState extends State<MapWidget> with WidgetsBindingObserver {
 
   @override
   void initState() {
-    initializeFlutterFire();
     super.initState();
     _clusterManager = _initClusterManager();
     Future.delayed(Duration.zero, () {
+      _checkIfRegistered();
       _startUpdateMarkers();
       _startUpdateMyPoint();
     });
     WidgetsBinding.instance!.addObserver(this);
   }
 
-  void initializeFlutterFire() async {
-    setState(() {
-      var auth = FirebaseAuth.instance;
-      _currentUser = auth.currentUser;
-      _currentUser?.getIdToken(true);
-
-      auth.authStateChanges().listen((User? user) {
-        setState(() {
-          _currentUser = user;
-        });
-      });
-    });
+  void _checkIfRegistered() async {
+    String? myUuid = await widget._preferences.getUuid();
+    if (myUuid == null) {
+      Navigator.pushNamed(context, '/registration');
+    }
   }
 
   @override
@@ -119,11 +105,7 @@ class MapWidgetState extends State<MapWidget> with WidgetsBindingObserver {
         markerBuilder: _markerBuilder, initialZoom: widget._initCameraPosition.zoom, stopClusteringZoom: 17.0);
   }
 
-  void _updateMarkers(Set<Marker> markers) async {
-    if (_currentUser == null || await widget._preferences.getUuid() == null) {
-      return;
-    }
-    print('Markers Updated ${markers.length} ');
+  void _updateMarkers(Set<Marker> markers) {
     setState(() {
       this.markers = markers;
     });
@@ -131,20 +113,6 @@ class MapWidgetState extends State<MapWidget> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    if (_currentUser == null) {
-      return new SignInScreen(
-        header: new Padding(
-          padding: const EdgeInsets.symmetric(vertical: 16.0),
-          child: new Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: new Text("Chose the authorisation method"),
-          ),
-        ),
-      );
-    } else {
-      _registerNewUserIfNeeded();
-    }
-
     return new Scaffold(
         body: Stack(children: <Widget>[
       GoogleMap(
@@ -187,53 +155,6 @@ class MapWidgetState extends State<MapWidget> with WidgetsBindingObserver {
     ]));
   }
 
-  void _registerNewUserIfNeeded() async {
-    // showDialog(
-    //   context: context,
-    //   barrierDismissible: false,
-    //   builder: (BuildContext context) {
-    //     return Center(
-    //       child: CircularProgressIndicator(),
-    //     );
-    //   },
-    // );
-    var userUuid = await widget._preferences.getUuid();
-    if (userUuid != null || _currentUser == null) {
-      return;
-    }
-    var fbsMsgToken = await _firebaseMessaging.getToken();
-    var fbsJwt = await _currentUser?.getIdToken();
-    var name = _currentUser?.displayName;
-    if (fbsMsgToken == null ||
-        fbsMsgToken.isEmpty ||
-        name == null ||
-        name.isEmpty ||
-        fbsJwt == null ||
-        fbsJwt.isEmpty) {
-      _logger.w("Unable to get fbsToken or JWT");
-      return;
-    }
-    var createdUser =
-        await widget.mapClient.createUser(new CreateUserDto(name, fbsMsgToken, fbsJwt)).catchError((Object obj) {
-      switch (obj.runtimeType) {
-        case DioError:
-          final res = (obj as DioError).response;
-          _logger.e("Unable to create a user : ${res?.statusCode} -> ${res?.statusMessage}");
-          break;
-        default:
-          _logger.e("Unable to create a user");
-      }
-    });
-
-    if (createdUser.uuid.isEmpty) {
-      _logger.w("Unable to registered new user " + name);
-      return;
-    }
-
-    await widget._preferences.setUuid(createdUser.uuid);
-    // Navigator.pop(context); //pop dialog
-    // Navigator.pop(context);
-  }
 
   Future<Marker> Function(Cluster<MapPoint>) get _markerBuilder => (cluster) async {
         var markerUuid = cluster.isMultiple ? cluster.getId() : cluster.items.first!.uuid;
@@ -274,22 +195,6 @@ class MapWidgetState extends State<MapWidget> with WidgetsBindingObserver {
         });
   }
 
-  // Future<InfoWindow> getInfoWindow(Cluster<MapPoint> cluster, bool isMe) async {
-  //   MapPoint? point = cluster.items.first;
-  //   if (point == null) {
-  //     return InfoWindow.noText;
-  //   }
-  //   if (isMe) {
-  //     return InfoWindow(title: "It is me " + point.uuid, snippet: '*');
-  //   }
-  //   ChatUser user = await widget._userService.getUser(point.uuid);
-  //   return InfoWindow(
-  //       title: "My Name is " + user.name,
-  //       snippet: '*',
-  //       onTap: () {
-  //         Navigator.pushNamed(context, '/chat', arguments: user);
-  //       });
-  // }
 
   Future<BitmapDescriptor> _getMarkerBitmap(int size, String? text) async {
     final PictureRecorder pictureRecorder = PictureRecorder();

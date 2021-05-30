@@ -72,7 +72,7 @@ Map<ProvidersTypes, ButtonDescription> providersDefinitions() => {
           "go-logo.png", "sign in with Google", "Google", () => {print("Google auth")},
           color: Colors.white, labelColor: Colors.grey),
       ProvidersTypes.email: new ButtonDescription(
-          "email-logo.png", "sign in with eail", "email", () => {print("email auth")},
+          "email-logo.png", "sign in with email", "email", () => {print("email auth")},
           color: const Color.fromRGBO(219, 68, 55, 1.0), labelColor: Colors.white),
       ProvidersTypes.anonymous: new ButtonDescription(
           "anonymous.png", "sign in as anonymous", "anonymous", () => {print("anonymous auth")},
